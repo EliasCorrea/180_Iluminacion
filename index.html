@@ -1,52 +1,57 @@
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-  </head>
 
-  <body>
-    <a-scene
-      mindar-image="imageTargetSrc: ./targets_180.mind;
-                    missTolerance: 0;
-                    filterMinCF: 0.001;
-                    filterBeta: 0.01;
-                    warmupTolerance: 5"
-      vr-mode-ui="enabled: false"
-      color-space="sRGB"
-      device-orientation-permission-ui="enabled: false"
-    >
-      <a-assets>
-        <a-asset-item
-          id="primerLamparaDePieModel"
-          src="https://raw.githubusercontent.com/EliasCorrea/180_Iluminacion/refs/heads/main/models/LamparaCoritita/lamparaDePie2.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="segundaLamparaDePieModel"
-          src="https://raw.githubusercontent.com/EliasCorrea/180_Iluminacion/refs/heads/main/models/LamaparaDePie/lamparaDePie.glb"
-        ></a-asset-item>
-      </a-assets>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    </head>
 
-      <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;"></a-camera>
+    <body>
+        <a-scene mindar-image="imageTargetSrc: ./targets_180.mind;
+                        missTolerance: 0;
+                        filterMinCF: 0.001;
+                        filterBeta: 0.01;
+                        warmupTolerance: 5"
+            vr-mode-ui="enabled: false"
+            color-space="sRGB"
+            device-orientation-permission-ui="enabled: false"
+            renderer="colorManagement: true"
+            light="defaultLightsEnabled: false">
 
-      <a-entity mindar-image-target="targetIndex: 0">
-        <a-gltf-model
-            rotation="0 90 90"
-            position="0 0 0.1"
-            scale="3 3 3"
-            src="#primerLamparaDePieModel"
-            ></a-gltf-model>
-      </a-entity>
+            <a-assets>
+                <a-asset-item id="primerLamparaDePieModel"
+                    src="https://raw.githubusercontent.com/EliasCorrea/180_Iluminacion/refs/heads/main/models/LamparaCoritita/lamparaDePie2.glb"></a-asset-item>
+                <a-asset-item id="segundaLamparaDePieModel"
+                    src="https://raw.githubusercontent.com/EliasCorrea/180_Iluminacion/refs/heads/main/models/LamaparaDePie/lamparaDePie.glb"></a-asset-item>
+            </a-assets>
 
-      <a-entity mindar-image-target="targetIndex: 1">
-        <a-gltf-model
-          rotation="0 90 90"
-          position="0 0 0.1"
-          scale="3 3 3"
-          src="#segundaLamparaDePieModel"
-        ></a-gltf-model>
-      </a-entity>
+            <!-- Iluminación global de la escena -->
+            <a-light type="ambient" color="#FFFFFF" intensity="1.0"></a-light>
+            <a-light type="directional" color="#FFFFFF" intensity="0.8" position="1 2 1"></a-light>
 
-    </a-scene>
-  </body>
+            <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;"></a-camera>
+
+            <a-entity mindar-image-target="targetIndex: 0">
+                <!-- Luz puntual sobre la primera lámpara -->
+                <a-light
+                    type="point"
+                    color="#FFF5E0"
+                    intensity="2"
+                    distance="3"
+                    decay="1"
+                    position="0 0.8 0.3">
+                </a-light>
+
+                <a-gltf-model rotation="0 90 90" position="0 0 0.1" scale="1 1 1" src="#primerLamparaDePieModel">
+                </a-gltf-model>
+            </a-entity>
+
+            <a-entity mindar-image-target="targetIndex: 1">
+                <a-gltf-model rotation="0 90 90" position="0 0 0.1" scale="1 1 1" src="#segundaLamparaDePieModel">
+                </a-gltf-model>
+            </a-entity>
+
+        </a-scene>
+    </body>
+
 </html>
