@@ -19,7 +19,7 @@
       <a-assets>
         <a-asset-item
           id="lamparaCortitaModel"
-          src="https://raw.githubusercontent.com/EliasCorrea/180_Iluminacion/refs/heads/main/models/LamparaCoritita/lamparaCortita.gltf"
+          src="https://raw.githubusercontent.com/EliasCorrea/180_Iluminacion/refs/heads/main/models/LamparaCoritita/lamparaMesa.glb"
         ></a-asset-item>
         <a-asset-item
           id="lamparaDePieModel"
@@ -30,18 +30,23 @@
       <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;"></a-camera>
 
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-gltf-model rotation="0 90 90" position="0 0 0.1" scale="1 1 1" src="#lamparaDePieModel"></a-gltf-model>
+        <a-gltf-model
+            rotation="0 90 90"
+            position="0 0 0.1"
+            scale="3 3 3"
+            src="#lamparaDePieModel"
+            ></a-gltf-model>
       </a-entity>
 
       <a-entity mindar-image-target="targetIndex: 1">
         <a-gltf-model
           rotation="0 90 90"
           position="0 0 0.1"
-          scale="0.3 0.3 0.3"
+          scale="3 3 3"
           src="#lamparaCortitaModel"
-          animation="property: position; to: 0 0 0.4; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"
         ></a-gltf-model>
       </a-entity>
+
     </a-scene>
   </body>
 </html>
