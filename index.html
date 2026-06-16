@@ -4,6 +4,94 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+        <style>
+            #light-panel {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background: rgba(0, 0, 0, 0.75);
+                color: white;
+                padding: 12px 16px;
+                border-radius: 10px;
+                z-index: 9999;
+                font-family: sans-serif;
+                font-size: 13px;
+                width: 240px;
+                backdrop-filter: blur(6px);
+            }
+            #light-panel h3 {
+                margin: 0 0 10px;
+                font-size: 14px;
+                font-weight: 600;
+                border-bottom: 1px solid rgba(255,255,255,0.2);
+                padding-bottom: 6px;
+            }
+            #light-panel .tabs {
+                display: flex;
+                gap: 6px;
+                margin-bottom: 10px;
+            }
+            #light-panel .tab {
+                flex: 1;
+                padding: 4px;
+                background: rgba(255,255,255,0.1);
+                border: none;
+                border-radius: 6px;
+                color: white;
+                cursor: pointer;
+                font-size: 12px;
+            }
+            #light-panel .tab.active {
+                background: rgba(255,255,255,0.35);
+                font-weight: 600;
+            }
+            #light-panel .row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 7px;
+                gap: 8px;
+            }
+            #light-panel label {
+                min-width: 70px;
+                font-size: 12px;
+                color: rgba(255,255,255,0.75);
+            }
+            #light-panel input[type=range] {
+                flex: 1;
+                accent-color: #fff;
+            }
+            #light-panel input[type=color] {
+                width: 32px;
+                height: 24px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                padding: 0;
+                background: none;
+            }
+            #light-panel .val {
+                min-width: 32px;
+                text-align: right;
+                font-size: 11px;
+                color: rgba(255,255,255,0.6);
+            }
+            #light-panel .toggle-btn {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                z-index: 10000;
+                background: rgba(0,0,0,0.6);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 8px 12px;
+                font-size: 13px;
+                cursor: pointer;
+                backdrop-filter: blur(4px);
+                display: none;
+            }
+        </style>
     </head>
 
     <body>
@@ -25,33 +113,137 @@
                     src="https://raw.githubusercontent.com/EliasCorrea/180_Iluminacion/refs/heads/main/models/LamaparaDePie/lamparaDePie.glb"></a-asset-item>
             </a-assets>
 
-            <!-- Iluminación global de la escena -->
             <a-light type="ambient" color="#FFFFFF" intensity="1.0"></a-light>
             <a-light type="directional" color="#FFFFFF" intensity="0.8" position="1 2 1"></a-light>
 
             <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;"></a-camera>
 
             <a-entity mindar-image-target="targetIndex: 0">
-                <!-- Luz puntual sobre la primera lámpara -->
-                <a-light
-                    type="point"
-                    color="#FFF5E0"
-                    intensity="2"
-                    distance="3"
-                    decay="1"
-                    position="0 0.8 0.3">
-                </a-light>
-
-                <a-gltf-model rotation="0 90 90" position="0 0 0.1" scale="1 1 1" src="#primerLamparaDePieModel">
-                </a-gltf-model>
+                <a-light id="luz0" type="point" color="#FFF5E0" intensity="2" distance="3" decay="1" position="0 0.8 0.3"></a-light>
+                <a-gltf-model rotation="0 90 90" position="0 0 0.1" scale="1 1 1" src="#primerLamparaDePieModel"></a-gltf-model>
             </a-entity>
 
             <a-entity mindar-image-target="targetIndex: 1">
-                <a-gltf-model rotation="0 90 90" position="0 0 0.1" scale="1 1 1" src="#segundaLamparaDePieModel">
-                </a-gltf-model>
+                <a-light id="luz1" type="point" color="#FFF5E0" intensity="2" distance="3" decay="1" position="0 0.8 0.3"></a-light>
+                <a-gltf-model rotation="0 90 90" position="0 0 0.1" scale="1 1 1" src="#segundaLamparaDePieModel"></a-gltf-model>
             </a-entity>
 
         </a-scene>
+
+        <!-- Panel flotante -->
+        <div id="light-panel">
+            <h3>💡 Luz puntual</h3>
+
+            <div class="tabs">
+                <button class="tab active" onclick="setTarget(0, this)">Entidad 0</button>
+                <button class="tab" onclick="setTarget(1, this)">Entidad 1</button>
+            </div>
+
+            <div class="row">
+                <label>Color</label>
+                <input type="color" id="ctrl-color" value="#fff5e0" oninput="applyLight()">
+                <span class="val" id="val-color">#fff5e0</span>
+            </div>
+            <div class="row">
+                <label>Intensidad</label>
+                <input type="range" id="ctrl-intensity" min="0" max="5" step="0.1" value="2" oninput="applyLight()">
+                <span class="val" id="val-intensity">2.0</span>
+            </div>
+            <div class="row">
+                <label>Distancia</label>
+                <input type="range" id="ctrl-distance" min="0.5" max="10" step="0.1" value="3" oninput="applyLight()">
+                <span class="val" id="val-distance">3.0</span>
+            </div>
+            <div class="row">
+                <label>Decay</label>
+                <input type="range" id="ctrl-decay" min="0" max="5" step="0.1" value="1" oninput="applyLight()">
+                <span class="val" id="val-decay">1.0</span>
+            </div>
+            <div class="row">
+                <label>Pos X</label>
+                <input type="range" id="ctrl-px" min="-2" max="2" step="0.05" value="0" oninput="applyLight()">
+                <span class="val" id="val-px">0.00</span>
+            </div>
+            <div class="row">
+                <label>Pos Y</label>
+                <input type="range" id="ctrl-py" min="-2" max="3" step="0.05" value="0.8" oninput="applyLight()">
+                <span class="val" id="val-py">0.80</span>
+            </div>
+            <div class="row">
+                <label>Pos Z</label>
+                <input type="range" id="ctrl-pz" min="-2" max="2" step="0.05" value="0.3" oninput="applyLight()">
+                <span class="val" id="val-pz">0.30</span>
+            </div>
+        </div>
+
+        <script>
+            let currentTarget = 0;
+
+            const lights = {
+                0: { color: '#fff5e0', intensity: 2, distance: 3, decay: 1, px: 0, py: 0.8, pz: 0.3 },
+                1: { color: '#fff5e0', intensity: 2, distance: 3, decay: 1, px: 0, py: 0.8, pz: 0.3 }
+            };
+
+            function setTarget(idx, btn) {
+                saveState();
+                currentTarget = idx;
+                document.querySelectorAll('#light-panel .tab').forEach(t => t.classList.remove('active'));
+                btn.classList.add('active');
+                loadState();
+            }
+
+            function saveState() {
+                lights[currentTarget] = {
+                    color:     document.getElementById('ctrl-color').value,
+                    intensity: parseFloat(document.getElementById('ctrl-intensity').value),
+                    distance:  parseFloat(document.getElementById('ctrl-distance').value),
+                    decay:     parseFloat(document.getElementById('ctrl-decay').value),
+                    px:        parseFloat(document.getElementById('ctrl-px').value),
+                    py:        parseFloat(document.getElementById('ctrl-py').value),
+                    pz:        parseFloat(document.getElementById('ctrl-pz').value),
+                };
+            }
+
+            function loadState() {
+                const s = lights[currentTarget];
+                document.getElementById('ctrl-color').value     = s.color;
+                document.getElementById('ctrl-intensity').value = s.intensity;
+                document.getElementById('ctrl-distance').value  = s.distance;
+                document.getElementById('ctrl-decay').value     = s.decay;
+                document.getElementById('ctrl-px').value        = s.px;
+                document.getElementById('ctrl-py').value        = s.py;
+                document.getElementById('ctrl-pz').value        = s.pz;
+                applyLight();
+            }
+
+            function applyLight() {
+                const color     = document.getElementById('ctrl-color').value;
+                const intensity = parseFloat(document.getElementById('ctrl-intensity').value);
+                const distance  = parseFloat(document.getElementById('ctrl-distance').value);
+                const decay     = parseFloat(document.getElementById('ctrl-decay').value);
+                const px        = parseFloat(document.getElementById('ctrl-px').value);
+                const py        = parseFloat(document.getElementById('ctrl-py').value);
+                const pz        = parseFloat(document.getElementById('ctrl-pz').value);
+
+                // Actualizar labels
+                document.getElementById('val-color').textContent     = color;
+                document.getElementById('val-intensity').textContent = intensity.toFixed(1);
+                document.getElementById('val-distance').textContent  = distance.toFixed(1);
+                document.getElementById('val-decay').textContent     = decay.toFixed(1);
+                document.getElementById('val-px').textContent        = px.toFixed(2);
+                document.getElementById('val-py').textContent        = py.toFixed(2);
+                document.getElementById('val-pz').textContent        = pz.toFixed(2);
+
+                // Aplicar a la luz A-Frame en tiempo real
+                const luz = document.getElementById('luz' + currentTarget);
+                if (luz) {
+                    luz.setAttribute('light', `type: point; color: ${color}; intensity: ${intensity}; distance: ${distance}; decay: ${decay}`);
+                    luz.setAttribute('position', `${px} ${py} ${pz}`);
+                }
+
+                saveState();
+            }
+        </script>
     </body>
 
 </html>
